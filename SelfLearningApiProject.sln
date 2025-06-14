@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36203.30 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfLearningApiProject", "SelfLearningApiProject\SelfLearningApiProject.csproj", "{AC356FB2-AD39-4339-B795-5470D88C62E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC356FB2-AD39-4339-B795-5470D88C62E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC356FB2-AD39-4339-B795-5470D88C62E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC356FB2-AD39-4339-B795-5470D88C62E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC356FB2-AD39-4339-B795-5470D88C62E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AEDC8037-5197-4BC1-A110-6FB1FDA8A145}
+	EndGlobalSection
+EndGlobal

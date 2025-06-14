@@ -1,0 +1,6 @@
+@SelfLearningApiProject_HostAddress = http://localhost:5101
+
+GET {{SelfLearningApiProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
