@@ -1,5 +1,5 @@
 ﻿using SelfLearningApiProject.Entities;
-using SelfLearningApiProject.Models;
+using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Repositories;
 
 namespace SelfLearningApiProject.Services
@@ -26,26 +26,40 @@ namespace SelfLearningApiProject.Services
             return products.Select(p => new ProductDto
             {
                 Id = p.Id,       // Product entity ka Id field DTO me map
-                Name = p.Name    // Product entity ka Name field DTO me map
+                Name = p.Name  ,  // Product entity ka Name field DTO me map
+                Price = p.Price // Product entity ka Price field DTO me map
             });
         }
 
         // Method: Ek product ko ID ke basis pe laata hai, aur usse DTO me convert karta hai
         public async Task<ProductDto?> GetProductByIdAsync(int id)
-        {
-            // Repository se ek product laate hain (ya null agar nahi mila)
-            var product = await _productRepository.GetByIdAsync(id);
-
-            // Agar product null mila (matlab DB me nahi mila), to null return karo
-            if (product == null)
-                return null;
-
-            // Agar mila to usse DTO format me convert karke return karo
-            return new ProductDto
+        {        
+            try
             {
-                Id = product.Id,
-                Name = product.Name
-            };
+                // Repository se ek product laate hain (ya null agar nahi mila)
+                var product = await _productRepository.GetByIdAsync(id);
+
+                // Agar product null mila (matlab DB me nahi mila), to null return karo
+                if (product == null)
+                    return null;
+
+                // Agar mila to usse DTO format me convert karke return karo
+                return new ProductDto
+                {
+                    Id = product.Id,
+                    Name = product.Name
+                };
+
+            }
+            catch (Exception ex)
+            {
+                // 🔥 Yahan pe log karna best hota hai (file ya console me)
+                Console.WriteLine($"Error in GetProductByIdAsync: {ex.Message}");
+
+                // 🔴 Service me exception ko re-throw karte hain
+                throw; // Ye controller tak error pass karega
+            }
+
         }
 
         // Method: Naya product create karta hai aur uska DTO return karta hai
@@ -54,7 +68,9 @@ namespace SelfLearningApiProject.Services
             // DTO se ek naya Entity object banate hain (yeh DB me store hoga)
             var product = new Product
             {
-                Name = productDto.Name
+                Name = productDto.Name, // Name ko set karte hain jo client se aaya hai
+                 //  Id = productDto.Id, // Agar Id client se aayi hai to use set karte hain, warna auto-generated ID use karenge
+                Price = productDto.Price // Price bhi set karte hain agar DTO me diya hai
             };
 
             // Repository ko bolte hain naya product add karne ke liye
@@ -66,8 +82,9 @@ namespace SelfLearningApiProject.Services
             // Entity se DTO banake return karte hain (confirmation ke liye)
             return new ProductDto
             {
-                Id = product.Id,
-                Name = product.Name
+                //Id = product.Id, // Id bhi DTO me set karte hain, yeh auto-generated ID hoti hai
+                Name = product.Name, // Name bhi DTO me set karte hain
+                Price = product.Price // Price bhi DTO me set karte hain
             };
         }
 

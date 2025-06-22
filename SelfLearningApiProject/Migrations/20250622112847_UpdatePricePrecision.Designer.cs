@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SelfLearningApiProject.Data;
 
@@ -10,9 +11,11 @@ using SelfLearningApiProject.Data;
 namespace SelfLearningApiProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250622112847_UpdatePricePrecision")]
+    partial class UpdatePricePrecision
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,6 @@ namespace SelfLearningApiProject.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -46,19 +48,19 @@ namespace SelfLearningApiProject.Migrations
                         {
                             Id = 1,
                             Name = "Pen",
-                            Price = 10.00m
+                            Price = 0m
                         },
                         new
                         {
                             Id = 2,
                             Name = "Notebook",
-                            Price = 15.00m
+                            Price = 0m
                         },
                         new
                         {
                             Id = 3,
                             Name = "Laptop",
-                            Price = 18.00m
+                            Price = 0m
                         });
                 });
 #pragma warning restore 612, 618

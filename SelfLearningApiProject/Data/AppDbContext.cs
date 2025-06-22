@@ -17,11 +17,16 @@ namespace SelfLearningApiProject.Data
         {
             base.OnModelCreating(modelBuilder); // Base class ki OnModelCreating ko call karte hain. yeh zaroori hai taaki base class ki configurations bhi apply ho sakein
 
+            // 🔧 Fix for decimal precision warning
+            modelBuilder.Entity<Product>()
+                        .Property(p => p.Price)
+                        .HasPrecision(18, 2); // ⬅️ Yeh line Price column ke liye decimal(18,2) apply karegi
+
             // Seed default product data
             modelBuilder.Entity<Product>().HasData( // Yeh seed data hai jo database me initial products daal dega jab migration apply hoga
-                new Product { Id = 1, Name = "Pen" },
-                new Product { Id = 2, Name = "Notebook" },
-                new Product { Id = 3, Name = "Laptop" }
+                new Product { Id = 1, Name = "Pen" , Price = 10.00M },
+                new Product { Id = 2, Name = "Notebook" , Price = 15.00M },
+                new Product { Id = 3, Name = "Laptop", Price = 18.00M }
             );
         }
     }

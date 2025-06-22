@@ -1,4 +1,5 @@
-﻿using SelfLearningApiProject.Models;
+﻿using SelfLearningApiProject.Entities;
+using SelfLearningApiProject.Models.DTO;
 
 namespace SelfLearningApiProject.Services
 {

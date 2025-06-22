@@ -11,8 +11,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Ye line batati hai ki jab IProductService maanga jaye, to ProductService provide karo.
 builder.Services.AddScoped<IProductService, ProductService>();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 

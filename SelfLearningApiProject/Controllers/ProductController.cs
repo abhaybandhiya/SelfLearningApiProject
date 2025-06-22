@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SelfLearningApiProject.Models;
+using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Services;
 
 namespace SelfLearningApiProject.Controllers
@@ -7,14 +7,19 @@ namespace SelfLearningApiProject.Controllers
     // Yeh class ek API controller hai – Isme HTTP endpoints hote hain
     [ApiController] // Batata hai ki yeh controller automatic model validation karega
     [Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
+
     public class ProductController : ControllerBase
     {
         // Service layer ka reference – business logic iske andar hoti hai
         private readonly IProductService _productService;
 
+        // Logger ka reference – errors ya info log karne ke liye use hota hai
+        private readonly ILogger<ProductController> _logger;
+
         // Constructor injection – DI system se IProductService ka object milega
-        public ProductController(IProductService productService) // IProductService ko inject karte hain, jo service layer ka interface hai
+        public ProductController(ILogger<ProductController> logger , IProductService productService) // IProductService ko inject karte hain, jo service layer ka interface hai
         {
+            _logger = logger; // Logger ko initialize karte hain, jisse ki hum logs likh sakein
             _productService = productService; // Service ko initialize karte hain. Yeh service layer ke methods ko call karne ke liye use hoga
         }
 
@@ -23,6 +28,8 @@ namespace SelfLearningApiProject.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            _logger.LogInformation("GetAll called with All products:"); // ✅ Info log
+
             // Service layer ko call kar rahe hain to get all products (DTO format me)
             var products = await _productService.GetAllProductsAsync();
 
@@ -36,15 +43,24 @@ namespace SelfLearningApiProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            // Service layer ko call karte hain specific product ke liye
-            var product = await _productService.GetProductByIdAsync(id);
+             _logger.LogInformation($"GetById called with ID: {id}"); // ✅ Info log
+            try
+            {
+                // Service layer ko call karte hain specific product ke liye
+                var product = await _productService.GetProductByIdAsync(id);
 
-            // Agar product nahi mila, to 404 Not Found return karo
-            if (product == null)
-                return NotFound();
+                // Agar product nahi mila, to 404 Not Found return karo
+                if (product == null)
+                    return NotFound($"Product with ID {id} not found."); // 404 Not Found
 
-            // Agar product mila, to 200 OK ke saath return karo
-            return Ok(product);
+                // Agar product mila, to 200 OK ke saath return karo
+                return Ok(product); // 200 OK
+            }
+            catch (Exception ex)
+            {
+                // 500 Internal Server Error
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         // HTTP POST method – naya product create karega
@@ -52,6 +68,10 @@ namespace SelfLearningApiProject.Controllers
         
         public async Task<IActionResult> Create([FromBody] ProductDto productDto) // [FromBody] se batata hai ki data request body se aayega
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // ⬅️ Validation fail ho to ye chalega
+            }
             // Agar client ne null bhej diya to 400 BadRequest return karo
             if (productDto == null)
                 return BadRequest();
@@ -61,6 +81,7 @@ namespace SelfLearningApiProject.Controllers
 
             // 201 Created return karte hain (standard for POST)
             return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
+            
         }
 
         // HTTP PUT method – existing product ko update karega
