@@ -14,6 +14,8 @@ namespace SelfLearningApiProject.Models.DTO
         public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")] // ⬅️ Price > 0 hona chahiye
+         
         public decimal Price { get; set; }
     }
 }

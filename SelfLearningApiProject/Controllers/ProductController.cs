@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SelfLearningApiProject.Helpers;
 using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Services;
 
@@ -79,13 +80,15 @@ namespace SelfLearningApiProject.Controllers
             // Service layer ko call karte hain naya product banane ke liye
             var createdProduct = await _productService.CreateProductAsync(productDto); // Yeh method naya product create karega aur uska DTO return karega
 
+            var response = new ApiResponse<ProductDto>("Product created successfully", createdProduct);
+
             // 201 Created return karte hain (standard for POST)
-            return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
+            return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, response); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
             
         }
 
         // HTTP PUT method – existing product ko update karega
-        [HttpPut("{id}")]        
+        [HttpPut("{id}")] 
         public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto) // [FromBody] se batata hai ki data request body se aayega
         {
             // Agar client ne null bhej diya to 400 BadRequest return karo
