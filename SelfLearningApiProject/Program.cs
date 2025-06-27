@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SelfLearningApiProject.Data;
+using SelfLearningApiProject.Mapping;
 using SelfLearningApiProject.Repositories;
 using SelfLearningApiProject.Services;
 
@@ -12,6 +13,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Ye line AutoMapper ko configure karti hai, jisse ki mapping profiles use ho sakein.
+builder.Services.AddAutoMapper(typeof(MappingProfile)); 
+
 
 // Add services to the container.
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SelfLearningApiProject.Data;
 
@@ -10,9 +11,11 @@ using SelfLearningApiProject.Data;
 namespace SelfLearningApiProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250624074722_ProductQtyadded")]
+    partial class ProductQtyadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,10 +31,6 @@ namespace SelfLearningApiProject.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -56,7 +55,6 @@ namespace SelfLearningApiProject.Migrations
                         new
                         {
                             Id = 1,
-                            Category = "",
                             Description = "",
                             Name = "Pen",
                             Price = 10.00m,
@@ -65,7 +63,6 @@ namespace SelfLearningApiProject.Migrations
                         new
                         {
                             Id = 2,
-                            Category = "",
                             Description = "",
                             Name = "Notebook",
                             Price = 15.00m,
@@ -74,7 +71,6 @@ namespace SelfLearningApiProject.Migrations
                         new
                         {
                             Id = 3,
-                            Category = "",
                             Description = "",
                             Name = "Laptop",
                             Price = 18.00m,

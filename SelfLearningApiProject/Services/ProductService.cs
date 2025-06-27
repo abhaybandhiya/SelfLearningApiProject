@@ -1,4 +1,5 @@
-﻿using SelfLearningApiProject.Entities;
+﻿using AutoMapper;
+using SelfLearningApiProject.Entities;
 using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Repositories;
 
@@ -10,10 +11,14 @@ namespace SelfLearningApiProject.Services
         // Repository ka reference, jisse database ke sath communication hoga
         private readonly IProductRepository _productRepository;
 
+        // Mapper ka reference, jisse entity ko DTO me convert karte hain (agar zarurat ho to)
+        private readonly IMapper _mapper;
+
         // Constructor me dependency injection ke through repository milti hai
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository,IMapper mapper)
         {
             _productRepository = productRepository;
+            _mapper = mapper; // Mapper ko initialize karte hain, jisse entity se DTO me conversion ho sake
         }
 
         // Method: Saare products fetch karta hai, unhe DTO me convert karta hai aur return karta hai
@@ -23,12 +28,15 @@ namespace SelfLearningApiProject.Services
             var products = await _productRepository.GetAllAsync();
 
             // Entity list ko DTO me convert karte hain (Client ko sirf required fields dikhani chahiye)
-            return products.Select(p => new ProductDto
-            {
-                Id = p.Id,       // Product entity ka Id field DTO me map
-                Name = p.Name  ,  // Product entity ka Name field DTO me map
-                Price = p.Price // Product entity ka Price field DTO me map
-            });
+            //return products.Select(p => new ProductDto
+            //{
+            //    Id = p.Id,       // Product entity ka Id field DTO me map
+            //    Name = p.Name  , // Product entity ka Name field DTO me map
+            //    Price = p.Price  // Product entity ka Price field DTO me map
+            //});
+
+            // Mapper ka use karke entity list ko DTO list me convert karte hain
+            return _mapper.Map<IEnumerable<ProductDto>>(products); // yeh line Product entity list ko ProductDto list me convert karti hai // aur return karti hai // agar products null nahi hai to, to yeh IEnumerable<ProductDto> object return karega // agar products null hai to, to yeh null return karega
         }
 
         // Method: Ek product ko ID ke basis pe laata hai, aur usse DTO me convert karta hai
@@ -44,11 +52,14 @@ namespace SelfLearningApiProject.Services
                     return null;
 
                 // Agar mila to usse DTO format me convert karke return karo
-                return new ProductDto
-                {
-                    Id = product.Id,
-                    Name = product.Name
-                };
+                //return new ProductDto
+                //{
+                //    Id = product.Id,
+                //    Name = product.Name
+                //};
+
+                // Mapper ka use karke entity ko DTO me convert karte hain
+                return _mapper.Map<ProductDto>(product); // yeh line Product entity ko ProductDto me convert karti hai // aur return karti hai // agar product null nahi hai to, to yeh ProductDto object return karega // agar product null hai to, to yeh null return karega
 
             }
             catch (Exception ex)
@@ -80,12 +91,15 @@ namespace SelfLearningApiProject.Services
             await _productRepository.SaveChangesAsync();
 
             // Entity se DTO banake return karte hain (confirmation ke liye)
-            return new ProductDto
-            {
-                //Id = product.Id, // Id bhi DTO me set karte hain, yeh auto-generated ID hoti hai
-                Name = product.Name, // Name bhi DTO me set karte hain
-                Price = product.Price // Price bhi DTO me set karte hain
-            };
+            //return new ProductDto
+            //{
+            //    //Id = product.Id, // Id bhi DTO me set karte hain, yeh auto-generated ID hoti hai
+            //    Name = product.Name, // Name bhi DTO me set karte hain
+            //    Price = product.Price // Price bhi DTO me set karte hain
+            //};
+
+            // Mapper ka use karke entity ko DTO me convert karte hain
+            return _mapper.Map<ProductDto>(product); // yeh line Product entity ko ProductDto me convert karti hai // aur return karti hai // agar product null nahi hai to, to yeh ProductDto object return karega // agar product null hai to, to yeh null return karega
         }
 
         // Method: Ek existing product ko update karta hai ID ke basis pe
@@ -98,7 +112,11 @@ namespace SelfLearningApiProject.Services
                 return false; // agar nahi mila to false return karo
 
             // Entity ko update karte hain DTO ke values se
-            product.Name = productDto.Name;
+            //product.Name = productDto.Name;
+            //product.Price = productDto.Price;
+
+            // Mapper ka use karke productDto se product entity ko update karte hain // yeh line ProductDto object ko Product entity me map karti hai // aur product entity ko update karti hai // agar productDto null nahi hai to, to yeh Product entity ko update karega // agar productDto null hai to, to yeh Product entity ko update nahi karega
+            _mapper.Map(productDto, product);
 
             // Repository ko bolte hain update kar do
             await _productRepository.UpdateAsync(product);

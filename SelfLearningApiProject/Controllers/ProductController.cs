@@ -60,7 +60,7 @@ namespace SelfLearningApiProject.Controllers
             catch (Exception ex)
             {
                 // 500 Internal Server Error
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error in GetById: {ex.Message}");
             }
         }
 
@@ -99,28 +99,27 @@ namespace SelfLearningApiProject.Controllers
 
             // Agar update successful nahi hua (matlab product ID se match nahi hua), to 404 Not Found return karo
             if (!success)
-                return NotFound();
-
-            return NoContent(); // 204: Successfully updated, but no content returned
+            {
+                return NotFound(new ApiResponse<ProductDto>("Product not updated", productDto));
+            }
+            return Ok(new ApiResponse<ProductDto>("Product updated successfully", productDto));
         }
 
         // HTTP DELETE method – product ko delete karega by ID
         [HttpDelete("{id}")]
 
-
         // Route: DELETE api/product/5 TO 5 id vale product ko delete karega // Deletes a product by ID 
-        public async Task<IActionResult> Delete(int id)  
+        public async Task<IActionResult> Delete(int id, ProductDto productDto)  
         {
             // Service layer ko call karte hain product delete karne ke liye
             var success = await _productService.DeleteProductAsync(id);
 
             // Agar delete successful nahi hua (matlab product ID se match nahi hua), to 404 Not Found return karo
             if (!success)
-                return NotFound();
+                return NotFound(new ApiResponse<ProductDto>("No data deleted", productDto));
             // Agar delete successful hua, to 204 No Content return karo (matlab delete ho gaya)
-            return NoContent();
+            return Ok(new ApiResponse<ProductDto>("Product deleted successfully", productDto));
         }
-
         // Aap yahan aur bhi HTTP methods (POST, PUT, DELETE) add kar sakte hain jaise ki products create/update/delete karne ke liye
     }
 }
