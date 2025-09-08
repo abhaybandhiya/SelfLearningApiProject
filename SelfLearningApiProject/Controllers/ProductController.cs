@@ -29,7 +29,7 @@ namespace SelfLearningApiProject.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            _logger.LogInformation("GetAll called with All products:"); // ✅ Info log
+            _logger.LogInformation("GetAll called with All products:"); // Info log
 
             // Service layer ko call kar rahe hain to get all products (DTO format me)
             var products = await _productService.GetAllProductsAsync();
@@ -102,7 +102,7 @@ namespace SelfLearningApiProject.Controllers
             {
                 return NotFound(new ApiResponse<ProductDto>("Product not updated", productDto));
             }
-            return Ok(new ApiResponse<ProductDto>("Product updated successfully", productDto));
+            return Ok(new ApiResponse<ProductDto>("Product updated successfullyyy", productDto));
         }
 
         // HTTP DELETE method – product ko delete karega by ID

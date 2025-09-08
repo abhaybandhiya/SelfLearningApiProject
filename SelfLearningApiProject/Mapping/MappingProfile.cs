@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using SelfLearningApiProject.Entities;
 using SelfLearningApiProject.Models.DTO;
 
@@ -15,6 +13,5 @@ namespace SelfLearningApiProject.Mapping
             // Product entity ko ProductDto me map karte hain aur vice versa // ReverseMap() se yeh dono tarah se mapping allow hoti hai // Iska matlab hai ki agar hum ProductDto se Product me map karna chahte hain to bhi yeh kaam karega
             CreateMap<Product, ProductDto>().ReverseMap();
         }
-
     }
 }

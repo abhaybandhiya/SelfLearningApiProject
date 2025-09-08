@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SelfLearningApiProject.Data;
 using SelfLearningApiProject.Entities;
 
-namespace SelfLearningApiProject.Repositories //
+namespace SelfLearningApiProject.Repositories // Namespace define karta hai jahan humari repository classes hain
 {
     // Yeh interface Product repository ke liye hai, jisse CRUD operations define hote hain
     public class ProductRepository : IProductRepository // Yeh class Product entity ke liye CRUD operations implement karti hai
