@@ -12,6 +12,7 @@
 
         public string DiscountPrice { get; set; } = string.Empty;
         public string DiscountPrice2 { get; set; } = string.Empty;
+        public string DiscountPrice3 { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         //public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
