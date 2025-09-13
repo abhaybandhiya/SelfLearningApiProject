@@ -17,7 +17,6 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 // Ye line AutoMapper ko configure karti hai, jisse ki mapping profiles use ho sakein.
 builder.Services.AddAutoMapper(typeof(MappingProfile)); 
 
-
 // Add services to the container.
 
 builder.Services.AddControllers();

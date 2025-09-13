@@ -14,8 +14,10 @@ namespace SelfLearningApiProject.Models.DTO
         public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(18,2)")]
-        [Range(20, double.MaxValue, ErrorMessage = "Price must be greater than 20")] // ⬅️ Price > 20 hona chahiye
+        [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0")] // ⬅️ Price > 0 hona chahiye
         [Required(ErrorMessage = "Product Prince is require")] // Yeh property product ka price hai, aur yeh required hai // agar client ne price nahi diya to error message dikhayega
         public decimal Price { get; set; }
+
+        //public string Category { get; set; } = string.Empty;
     }
 }
