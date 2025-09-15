@@ -28,7 +28,7 @@ namespace SelfLearningApiProject.Controllers
         // Route: GET api/product
         [HttpGet]
         public async Task<IActionResult> GetAll()
-        {
+        { 
             _logger.LogInformation("GetAll called with All products:"); // Info log
 
             // Service layer ko call kar rahe hain to get all products (DTO format me)

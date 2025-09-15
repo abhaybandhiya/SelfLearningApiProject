@@ -4,6 +4,7 @@ using SelfLearningApiProject.Mapping;
 using SelfLearningApiProject.Repositories;
 using SelfLearningApiProject.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Ye line Dependency Injection system ko batati hai ki jab IProductRepository maanga jaye, to ProductRepository provide karo.
@@ -15,7 +16,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Ye line AutoMapper ko configure karti hai, jisse ki mapping profiles use ho sakein.
-builder.Services.AddAutoMapper(typeof(MappingProfile)); 
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Add services to the container.
 
