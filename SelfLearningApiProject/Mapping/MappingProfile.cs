@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using SelfLearningApiProject.Entities;
+using SelfLearningApiProject.Entities; 
 using SelfLearningApiProject.Models.DTO;
-
+    
 namespace SelfLearningApiProject.Mapping
 {
     // AutoMapper ka use karke hum entities aur DTOs ke beech mapping define karte hain //Yeh class AutoMapper ke liye configuration profile hai // Isme hum mapping rules define karte hain, jisse ki entities aur DTOs ke beech conversion asan ho jata hai

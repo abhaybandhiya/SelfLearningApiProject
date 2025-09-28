@@ -17,10 +17,8 @@
 //    }
 //}
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SelfLearningApiProject.Services;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -34,7 +32,7 @@ public class JwtService : IJwtTokenService
         _config = config;
     }
 
-    public string GenerateToken(string username)
+    public string GenerateToken(string username, string role)
     {
         // 1. JWT settings read karna
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
@@ -44,6 +42,7 @@ public class JwtService : IJwtTokenService
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, username),
+            new Claim(ClaimTypes.Role, role),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

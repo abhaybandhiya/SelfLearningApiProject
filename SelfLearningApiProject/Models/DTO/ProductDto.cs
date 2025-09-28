@@ -18,6 +18,6 @@ namespace SelfLearningApiProject.Models.DTO
         [Required(ErrorMessage = "Product Prince is require")] // Yeh property product ka price hai, aur yeh required hai // agar client ne price nahi diya to error message dikhayega
         public decimal Price { get; set; }
 
-        //public string Category { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
     }
 }

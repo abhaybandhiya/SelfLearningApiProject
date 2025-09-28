@@ -2,6 +2,8 @@
 {
     public interface IJwtTokenService
     {
-        string GenerateToken(string username);
+        // Yeh method JWT token generate karega given username and role ke liye
+        string GenerateToken(string username, string role);
+        //object GenerateToken(string username);
     }
 }

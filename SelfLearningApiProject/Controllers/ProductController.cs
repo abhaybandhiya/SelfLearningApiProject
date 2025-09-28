@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SelfLearningApiProject.Helpers;
 using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Services;
@@ -6,6 +7,7 @@ using SelfLearningApiProject.Services;
 namespace SelfLearningApiProject.Controllers
 {
     // Yeh class ek API controller hai – Isme HTTP endpoints hote hain
+    [Authorize]
     [ApiController] // Batata hai ki yeh controller automatic model validation karega
     [Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
 
@@ -106,6 +108,7 @@ namespace SelfLearningApiProject.Controllers
         }
 
         // HTTP DELETE method – product ko delete karega by ID
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
 
         // Route: DELETE api/product/5 TO 5 id vale product ko delete karega // Deletes a product by ID 

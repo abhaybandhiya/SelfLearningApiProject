@@ -58,7 +58,34 @@ builder.Services.AddSwaggerGen(c =>
         Title = "SelfLearningApiProject API",
         Version = "v1"
     });
+
+    // 🔑 JWT Authorize button ke liye
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your token"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
+
 builder.Services.AddScoped<IJwtTokenService, JwtService>();
 
 var app = builder.Build();
