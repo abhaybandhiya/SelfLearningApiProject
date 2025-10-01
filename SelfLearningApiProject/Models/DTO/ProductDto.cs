@@ -17,7 +17,6 @@ namespace SelfLearningApiProject.Models.DTO
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0")] // ⬅️ Price > 0 hona chahiye
         [Required(ErrorMessage = "Product Prince is require")] // Yeh property product ka price hai, aur yeh required hai // agar client ne price nahi diya to error message dikhayega
         public decimal Price { get; set; }
-
         public string Category { get; set; } = string.Empty;
     }
 }

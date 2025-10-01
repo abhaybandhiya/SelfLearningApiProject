@@ -39,6 +39,12 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Ye line batati hai ki jab IProductService maanga jaye, to ProductService provide karo.
 builder.Services.AddScoped<IProductService, ProductService>();
 
+// Ye line batati hai ki jab IUserRepository maanga jaye, to UserRepository provide karo.
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Ye line batati hai ki jab IAuthService maanga jaye, to AuthService provide karo.
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Ye line AutoMapper ko configure karti hai, jisse ki mapping profiles use ho sakein.
