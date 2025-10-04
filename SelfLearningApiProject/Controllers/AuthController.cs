@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SelfLearningApiProject.Repositories;
 using SelfLearningApiProject.Services;
 
 namespace JwtAuthDemo.Controllers
@@ -16,6 +15,32 @@ namespace JwtAuthDemo.Controllers
             _jwtTokenService = jwtTokenService;
             _authService = authService;
         }
+
+        // User registration endpoint jo naya user banata hai database me aur password ko hash karta hai AuthService me aur role set karta hai
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] LoginRequest request) // LoginRequest DTO ka use kar rahe hain jisme username, password aur optional role hota hai
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Check karo ki username already exist to nahi karta database me agar karta hai to error bhejo client ko
+            var existing = await _authService.GetUserByUsernameAsync(request.Username);
+            if (existing != null)
+                return BadRequest(new { message = "Username already exists" });
+
+            // Naya user create karo jo database me jayega AuthService me password hashing hoga  aur role set hoga
+            var user = new SelfLearningApiProject.Entities.User
+            {
+                Username = request.Username,
+                Password = request.Password, // AuthService will hash
+                Role = string.IsNullOrWhiteSpace(request.Role) ? "User" : request.Role
+            };
+
+            await _authService.CreateUserAsync(user);
+
+            return Ok(new { message = "User registered successfully" });
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -63,7 +88,8 @@ namespace JwtAuthDemo.Controllers
     // DTO for login request
     public class LoginRequest
     {
-        public string? Username { get; set; }
-        public string? Password { get; set; }
+        public string? Username { get; set; } // username aur password dono required hain
+        public string? Password { get; set; } // plain text me aayega, AuthService me hash hoga
+        public string? Role { get; set; } // optional role hai, agar nahi diya to "User" set hoga
     }
 }

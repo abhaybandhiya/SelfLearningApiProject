@@ -16,9 +16,17 @@ namespace SelfLearningApiProject.Repositories
             _context = context;
         }
 
+        // Yeh method username ke basis par user ko database se fetch karta hai aur return karta hai
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
+
+        // Yeh method naya user create karta hai database me aur changes ko save karta hai 
+        public async Task CreateAsync(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -64,10 +64,10 @@ namespace SelfLearningApiProject.Services
             }
             catch (Exception ex)
             {
-                // 🔥 Yahan pe log karna best hota hai (file ya console me)
+                // Yahan pe log karna best hota hai (file ya console me)
                 Console.WriteLine($"Error in GetProductByIdAsync: {ex.Message}");
 
-                // 🔴 Service me exception ko re-throw karte hain
+                // Service me exception ko re-throw karte hain
                 throw; // Ye controller tak error pass karega
             }
 
