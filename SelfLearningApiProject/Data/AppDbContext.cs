@@ -30,8 +30,20 @@ namespace SelfLearningApiProject.Data
             );
 
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "admin123", Role = "Admin" },
-                new User { Id = 2, Username = "user", Password = "user123", Role = "User" }
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Password = "$2a$12$l6fM6kpo4EMtIrkaRyGW3.TowOQtXcqCrtl0Hk5Ih95XEgshdTFQW",
+                    Role = "Admin"
+                },
+                new User
+                {
+                    Id = 2,
+                    Username = "user",
+                    Password = "$2a$12$y9ivYvovbImDl8xzPpZVWeK9wGaqYX/qo0P2gUxW8y.TQaLEi3iRW",
+                    Role = "User"
+                }
             );
         }
     }

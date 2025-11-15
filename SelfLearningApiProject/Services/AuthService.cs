@@ -21,7 +21,7 @@ namespace SelfLearningApiProject.Services
             if (user == null) return null;
 
             // ye password ko verify karta hai jo hashed password ke against hai database me stored hai BCrypt ka use karke agar password match karta hai to user return karo, warna null return karo
-            bool verified = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            bool verified = BCrypt.Net.BCrypt.Verify(password, user.Password); // password verify karte hain jo user ke hashed password ke against hai agar match karta hai to true return karega, warna false
             return verified ? user : null;
         }
 
@@ -29,7 +29,7 @@ namespace SelfLearningApiProject.Services
         public async Task<User> CreateUserAsync(User user)
         {
             // Password ko hash karo BCrypt ka use karke taaki secure rahe
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password,workFactor:12);
             await _userRepository.CreateAsync(user);
             return user;
         }
@@ -38,6 +38,6 @@ namespace SelfLearningApiProject.Services
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             return await _userRepository.GetUserByUsernameAsync(username);
-        }
+        } 
     }
 }

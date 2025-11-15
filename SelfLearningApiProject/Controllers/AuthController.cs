@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SelfLearningApiProject.Entities;
+using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Services;
 
 namespace JwtAuthDemo.Controllers
@@ -18,8 +20,9 @@ namespace JwtAuthDemo.Controllers
 
         // User registration endpoint jo naya user banata hai database me aur password ko hash karta hai AuthService me aur role set karta hai
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] LoginRequest request) // LoginRequest DTO ka use kar rahe hain jisme username, password aur optional role hota hai
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request) // LoginRequest DTO ka use kar rahe hain jisme username, password aur optional role hota hai
         {
+            // Request ko validate karo ki sab fields sahi hain ya nahi
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -29,7 +32,7 @@ namespace JwtAuthDemo.Controllers
                 return BadRequest(new { message = "Username already exists" });
 
             // Naya user create karo jo database me jayega AuthService me password hashing hoga  aur role set hoga
-            var user = new SelfLearningApiProject.Entities.User
+            var user = new User
             {
                 Username = request.Username,
                 Password = request.Password, // AuthService will hash

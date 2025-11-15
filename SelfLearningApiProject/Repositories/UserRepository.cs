@@ -19,6 +19,7 @@ namespace SelfLearningApiProject.Repositories
         // Yeh method username ke basis par user ko database se fetch karta hai aur return karta hai
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
+            // Yeh line database me Users table me se pehla user fetch karti hai jiska username match karta hai provided username ke sath 
             return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
