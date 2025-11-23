@@ -21,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using SelfLearningApiProject.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 public class JwtService : IJwtTokenService
@@ -43,7 +44,11 @@ public class JwtService : IJwtTokenService
         {
             new Claim(JwtRegisteredClaimNames.Sub, username),
             new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
+            // Custom claim for demo policies:
+            new Claim("department", role == "Admin" ? "Management" : "Sales")
+            // (abhi simple mapping rakhi hai; baad me User entity me Department aa gaya to yahin se pick kar lena)
         };
 
         // 3. Token banana
@@ -57,5 +62,13 @@ public class JwtService : IJwtTokenService
 
         // 4. Token string return
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 }

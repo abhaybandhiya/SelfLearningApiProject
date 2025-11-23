@@ -40,13 +40,13 @@ namespace SelfLearningApiProject.Controllers
             return Ok(products);
         }
 
-
         // HTTP GET method – specific product ko ID ke basis pe laata hai
         // Route: GET api/product/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-             _logger.LogInformation($"GetById called with ID: {id}"); // ✅ Info log
+            // Info log karte hain ki GetById method call hua hai
+            _logger.LogInformation($"GetById called with ID: {id}");
             try
             {
                 // Service layer ko call karte hain specific product ke liye
@@ -86,11 +86,11 @@ namespace SelfLearningApiProject.Controllers
 
             // 201 Created return karte hain (standard for POST)
             return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, response); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
-            
+
         }
 
         // HTTP PUT method – existing product ko update karega
-        [HttpPut("{id}")] 
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto) // [FromBody] se batata hai ki data request body se aayega
         {
             // Agar client ne null bhej diya to 400 BadRequest return karo

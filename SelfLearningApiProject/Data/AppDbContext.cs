@@ -21,7 +21,7 @@ namespace SelfLearningApiProject.Data
             modelBuilder.Entity<Product>()
                         .Property(p => p.Price)
                         .HasPrecision(18, 2); // ⬅️ Yeh line Price column ke liye decimal(18,2) apply karegi
-
+            
             // Seed default product data
             modelBuilder.Entity<Product>().HasData( // Yeh seed data hai jo database me initial products daal dega jab migration apply hoga
                 new Product { Id = 1, Name = "Pen" , Price = 10.00M },

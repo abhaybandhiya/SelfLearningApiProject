@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 
 // WebApplication builder create karte hain, jo ki application ko configure karega
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +32,28 @@ builder.Services.AddAuthentication(options =>
      };
  }); // JWT Bearer authentication add karta hai jisse API requests authenticate ho sakein
 
-builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization(
+       options =>
+       {
+           // 1) Role-based policy via policy name
+           options.AddPolicy("AdminOnly", policy =>
+               policy.RequireRole("Admin"));
+
+           // 2) Claim required (jti) — token uniqueness present
+           options.AddPolicy("HasJti", policy =>
+               policy.RequireClaim(JwtRegisteredClaimNames.Jti));
+
+           // 3) Department based access (custom claim)
+           options.AddPolicy("SalesDept", policy =>
+               policy.RequireClaim("department", "Sales"));
+
+           // (bonus) Multi-condition example:
+           // options.AddPolicy("MgmtOrAdmin", policy =>
+           //     policy.RequireAssertion(ctx =>
+           //         ctx.User.IsInRole("Admin") ||
+           //         ctx.User.HasClaim("department", "Management")));
+       }
+    );
 
 //Ye line Dependency Injection system ko batati hai ki jab IProductRepository maanga jaye, to ProductRepository provide karo.
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

@@ -46,24 +46,30 @@ namespace JwtAuthDemo.Controllers
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             // User ko validate karo (username aur password check karo) yeh method database se user ko fetch karta hai aur password check karta hai
             var user = await _authService.ValidateUserAsync(request.Username, request.Password);
+            if (user == null)
+                return Unauthorized("Invalid username or password");
 
-            if (user != null) // Agar user valid hai to JWT token generate karo
+            // JWT token generate karo user ke username aur role ke basis par
+            var accessToken = _jwtTokenService.GenerateToken(user.Username, user.Role);
+
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+
+            DateTime expiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _authService.UpdateUserRefreshTokenAsync(user, refreshToken, expiryTime);
+            return Ok(new
             {
-                // JWT token generate karo jo username aur role ko include karta hai aur client ko bhejo
-                var token = _jwtTokenService.GenerateToken(user.Username, user.Role);
-                // Client ko token bhejo response me kyaunki yeh token aage ke requests me use hoga authentication ke liye
-                return Ok(new { Token = token });
-            }
-
-            return Unauthorized("Invalid username or password");
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            });
         }
 
         // Sirf Admin dekh sakta hai
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("admin-data")]
         public IActionResult GetAdminData()
         {
@@ -86,13 +92,38 @@ namespace JwtAuthDemo.Controllers
         {
             return Ok("Yeh Admin aur User dono dekh sakte hain!");
         }
-    }
 
-    // DTO for login request
-    public class LoginRequest
-    {
-        public string? Username { get; set; } // username aur password dono required hain
-        public string? Password { get; set; } // plain text me aayega, AuthService me hash hoga
-        public string? Role { get; set; } // optional role hai, agar nahi diya to "User" set hoga
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDTO request)
+        {
+            // 1. Check user by refresh token
+            var user = await _authService.GetUserByRefreshTokenAsync(request.RefreshToken);
+
+            if (user == null)
+                return Unauthorized("Invalid refresh token");
+
+            // 2. Check token expiry
+            if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                return Unauthorized("Refresh token expired");
+
+            // 3. Generate new access & refresh token
+            var newAccessToken = _jwtTokenService.GenerateToken(user.Username, user.Role);
+            var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
+
+            // 4. Save new refresh token (token rotation)
+            await _authService.UpdateUserRefreshTokenAsync(
+                user,
+                newRefreshToken,
+                DateTime.UtcNow.AddDays(7)
+            );
+
+            // 5. Return both
+            return Ok(new
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            });
+        }
+
     }
 }

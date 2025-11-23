@@ -9,5 +9,12 @@ namespace SelfLearningApiProject.Repositories
 
         // Yeh method naya user create karta hai database me
         Task CreateAsync(User user);
+
+        // Yeh method existing user ko update karta hai database me
+        Task UpdateAsync(User user);
+
+        // Yeh method refresh token ke basis par user ko fetch karta hai
+        Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
+
     }
 }

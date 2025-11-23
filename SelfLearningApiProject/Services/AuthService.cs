@@ -38,6 +38,21 @@ namespace SelfLearningApiProject.Services
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             return await _userRepository.GetUserByUsernameAsync(username);
-        } 
+        }
+
+        // Yeh method user ke refresh token aur expiry time ko update karta hai
+        public async Task UpdateUserRefreshTokenAsync(User user, string refreshToken, DateTime expiryTime)
+        {
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = expiryTime;
+            // Database me user ko update karo
+            await _userRepository.UpdateAsync(user);
+        }
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+            return user;
+        }
+
     }
 }

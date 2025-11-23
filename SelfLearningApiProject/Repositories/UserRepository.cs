@@ -29,5 +29,19 @@ namespace SelfLearningApiProject.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+
+        // Yeh method user object ko parameter ke roop me leta hai jisme updated information hoti hai
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        // Yeh method refresh token ke basis par user ko database se fetch karta hai aur return karta hai
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        }
     }
 }
