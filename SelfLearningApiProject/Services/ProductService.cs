@@ -141,5 +141,27 @@ namespace SelfLearningApiProject.Services
             return true;
         }
 
+        // Method: Pagination ke liye products fetch karta hai specific page aur size ke hisaab se
+        public async Task<IEnumerable<ProductDto>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
+        {
+            var products = await _productRepository.GetPaginatedProductsAsync(pageNumber, pageSize);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
+        }
+
+        // Method: Keyword ke basis pe products search karta hai
+        public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string keyword)
+        {
+            // Repository se search results laate hain
+            var products = await _productRepository.SearchAsync(keyword);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
+        }
+
+        // Method: Products ko sort karta hai given field aur order ke hisaab se
+        public async Task<IEnumerable<ProductDto>> GetSortedProductsAsync(string sortBy, string sortOrder)
+        {
+            var products = await _productRepository.SortAsync(sortBy, sortOrder);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
+        }
+
     }
 }

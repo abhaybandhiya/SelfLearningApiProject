@@ -23,5 +23,14 @@ namespace SelfLearningApiProject.Services
         // Product ko delete karega by ID
         Task<bool> DeleteProductAsync(int id); // Product ko delete karega by ID, agar successful hua to true return karega. agar nahi mila to false return karega
 
+        // Pagination ke liye method - specific page aur size ke hisaab se products return karega
+        Task<IEnumerable<ProductDto>> GetPaginatedProductsAsync(int pageNumber, int pageSize);
+
+        // Keyword ke basis pe products search karega
+        Task<IEnumerable<ProductDto>> SearchProductsAsync(string keyword);
+
+        // Products ko sort karne ke liye method
+        Task<IEnumerable<ProductDto>> GetSortedProductsAsync(string sortBy, string sortOrder);
+
     }
 }

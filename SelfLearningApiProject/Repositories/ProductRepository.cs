@@ -55,5 +55,59 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
         {
             return await _context.SaveChangesAsync() > 0; // Yeh line changes ko database me save karti hai aur agar koi changes save hue to true return karti hai, warna false return karti hai // yeh asynchronous hai, isliye await keyword use hota hai // aur Task<bool> return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
         }
+
+        // Yeh method paginated products ko fetch karta hai database se
+        public async Task<IEnumerable<Product>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
+        {
+            return await _context.Products
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        // Yeh method products ko keyword ke basis pe search karta hai
+        //public async Task<IEnumerable<Product>> SearchAsync(string keyword)
+        //{
+        //    return await _context.Products
+        //        .Where(p => p.Name.Contains(keyword))   // Name me match karega
+        //        .ToListAsync();
+        //}
+
+        // Yeh method products ko keyword ke basis pe search karta hai (LIKE operator ka use karke)
+        public async Task<IEnumerable<Product>> SearchAsync(string keyword)
+        {
+            return await _context.Products.Where(p => EF.Functions.Like(p.Name, $"%{keyword}%")).ToListAsync();
+        }
+
+        // Yeh method products ko sort karta hai specified field aur order ke basis pe
+        public async Task<IEnumerable<Product>> SortAsync(string sortBy, string sortOrder)
+        {
+            IQueryable<Product> query = _context.Products;
+
+            // sortBy: name / price
+            // sortOrder: asc / desc
+            switch (sortBy.ToLower())
+            {
+                case "name":
+                    query = sortOrder.ToLower() == "desc"
+                        ? query.OrderByDescending(p => p.Name)
+                        : query.OrderBy(p => p.Name);
+                    break;
+
+                case "price":
+                    query = sortOrder.ToLower() == "desc"
+                        ? query.OrderByDescending(p => p.Price)
+                        : query.OrderBy(p => p.Price);
+                    break;
+
+                default:
+                    // default sorting by Id
+                    query = query.OrderBy(p => p.Id);
+                    break;
+            }
+
+            return await query.ToListAsync();
+        }
+
     }
 }

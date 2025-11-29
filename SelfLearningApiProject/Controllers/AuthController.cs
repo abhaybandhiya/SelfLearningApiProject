@@ -78,7 +78,7 @@ namespace JwtAuthDemo.Controllers
 
         // Sirf User dekh sakta hai
         // Is endpoint ko access karne ke liye valid JWT token chahiye yeh line is endpoint ko secure karti hai sirf authenticated users hi isse access kar sakte hain
-        [Authorize(Roles = "User")]   
+        [Authorize(Roles = "User")]
         [HttpGet("user-data")]
         public IActionResult GetSecureData()
         {

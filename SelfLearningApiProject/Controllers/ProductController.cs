@@ -124,5 +124,35 @@ namespace SelfLearningApiProject.Controllers
             return Ok(new ApiResponse<ProductDto>("Product deleted successfully", productDto));
         }
         // Aap yahan aur bhi HTTP methods (POST, PUT, DELETE) add kar sakte hain jaise ki products create/update/delete karne ke liye
+
+        // HTTP GET method – paginated products ko laata hai
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged([FromQuery] PaginationRequestDTO request)
+        {
+            var data = await _productService.GetPaginatedProductsAsync(request.PageNumber, request.PageSize);
+            return Ok(data);
+        }
+
+        [AllowAnonymous] // Is endpoint ko anonymous access ki permission hai 
+        // HTTP GET method – products ko search karta hai keyword ke basis pe
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return BadRequest("Keyword cannot be empty");
+
+            var result = await _productService.SearchProductsAsync(keyword.ToLower());
+            return Ok(result);
+        }
+
+        // HTTP GET method – products ko sort karta hai
+        [AllowAnonymous] // Is endpoint ko anonymous access ki permission hai 
+        [HttpGet("sorted")]
+        public async Task<IActionResult> GetSorted([FromQuery] string sortBy = "name", [FromQuery] string sortOrder = "asc")
+        {
+            var result = await _productService.GetSortedProductsAsync(sortBy, sortOrder);
+            return Ok(result);
+        }
+
     }
 }

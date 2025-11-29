@@ -12,5 +12,11 @@ namespace SelfLearningApiProject.Repositories
         Task UpdateAsync(Product product); //Product ko update karta hai
         Task DeleteAsync(Product product); //Product ko delete karta hai
         Task<bool> SaveChangesAsync(); //Changes database me save karta hai (best practice)
+        Task<IEnumerable<Product>> GetPaginatedProductsAsync(int pageNumber, int pageSize); //Pagination ke liye products laata hai
+        Task<IEnumerable<Product>> SearchAsync(string keyword); // Keyword ke basis pe products search karta hai
+
+        // Products ko sort karne ke liye method
+        Task<IEnumerable<Product>> SortAsync(string sortBy, string sortOrder);
+
     }
 }
