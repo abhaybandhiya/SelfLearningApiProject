@@ -1,4 +1,5 @@
 ﻿using SelfLearningApiProject.Entities;
+using SelfLearningApiProject.Models.DTO;
 
 namespace SelfLearningApiProject.Repositories
 {
@@ -17,6 +18,10 @@ namespace SelfLearningApiProject.Repositories
 
         // Products ko sort karne ke liye method
         Task<IEnumerable<Product>> SortAsync(string sortBy, string sortOrder);
+        
+        Task<IEnumerable<Product>> FilterAsync(FilteringRequestDTO request);
+
+        Task<(IEnumerable<Product>, int)> GetAdvancedAsync(AdvancedProductQueryDTO query);
 
     }
 }

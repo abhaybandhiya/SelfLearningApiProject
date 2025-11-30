@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SelfLearningApiProject.Entities;
 using SelfLearningApiProject.Models.DTO;
+using SelfLearningApiProject.Models.Responses;
 using SelfLearningApiProject.Repositories;
 
 namespace SelfLearningApiProject.Services
@@ -162,6 +163,30 @@ namespace SelfLearningApiProject.Services
             var products = await _productRepository.SortAsync(sortBy, sortOrder);
             return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
+
+        // Method: Products ko filter karta hai given criteria ke hisaab se
+        public async Task<IEnumerable<ProductDto>> FilterProductsAsync(FilteringRequestDTO request)
+        {
+            var products = await _productRepository.FilterAsync(request);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
+        }
+
+        // Method: Advanced querying with pagination, sorting, filtering, searching
+        public async Task<PagedResponse<ProductDto>> GetAdvancedProductsAsync(AdvancedProductQueryDTO query)
+        {
+            var (products, totalRecords) = await _productRepository.GetAdvancedAsync(query);
+
+            return new PagedResponse<ProductDto>
+            {
+                Data = _mapper.Map<IEnumerable<ProductDto>>(products),
+                TotalRecords = totalRecords,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalPages = (int)Math.Ceiling(totalRecords / (double)query.PageSize)
+            };
+        }
+
+
 
     }
 }

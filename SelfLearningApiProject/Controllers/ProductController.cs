@@ -154,5 +154,22 @@ namespace SelfLearningApiProject.Controllers
             return Ok(result);
         }
 
+        // HTTP POST method – products ko filter karta hai        
+        [AllowAnonymous]
+        [HttpPost("filter")]
+        public async Task<IActionResult> FilterProducts([FromBody] FilteringRequestDTO request)
+        {
+            var result = await _productService.FilterProductsAsync(request);
+            return Ok(result);
+        }
+            
+        [AllowAnonymous]
+        // HTTP POST method – advanced product query ke liye multiple criteria ke basis pe products ko fetch karta hai 
+        [HttpPost("advanced")]
+        public async Task<IActionResult> GetAdvanced([FromBody] AdvancedProductQueryDTO query)
+        {
+            var result = await _productService.GetAdvancedProductsAsync(query);
+            return Ok(result);
+        }
     }
 }

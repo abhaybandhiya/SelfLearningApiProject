@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SelfLearningApiProject.Data;
 using SelfLearningApiProject.Entities;
+using SelfLearningApiProject.Models.DTO;
 
 namespace SelfLearningApiProject.Repositories // Namespace define karta hai jahan humari repository classes hain
 {
@@ -108,6 +109,68 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
 
             return await query.ToListAsync();
         }
+
+        // Yeh method products ko filter karta hai multiple criteria ke basis pe // jaise price range, name starts with, category, etc.
+        public async Task<IEnumerable<Product>> FilterAsync(FilteringRequestDTO request)
+        {
+            IQueryable<Product> query = _context.Products;
+
+            if (request.PriceFrom.HasValue)
+                query = query.Where(p => p.Price >= request.PriceFrom);
+
+            if (request.PriceTo.HasValue)
+                query = query.Where(p => p.Price <= request.PriceTo);
+
+            if (!string.IsNullOrWhiteSpace(request.NameStartsWith))
+                query = query.Where(p => EF.Functions.Like(p.Name, $"{request.NameStartsWith}%"));
+
+            // future ready (if category column added later)
+            if (!string.IsNullOrWhiteSpace(request.Category))
+                query = query.Where(p => p.Category == request.Category);
+
+            return await query.ToListAsync();
+        }
+
+        // Yeh method advanced querying karta hai products pe // jisme searching, filtering, sorting, aur pagination sab included hai
+        public async Task<(IEnumerable<Product>, int)> GetAdvancedAsync(AdvancedProductQueryDTO query)
+        {
+            IQueryable<Product> q = _context.Products;
+
+            // Searching
+            if (!string.IsNullOrWhiteSpace(query.Search))
+                q = q.Where(p => EF.Functions.Like(p.Name, $"%{query.Search}%"));
+
+            // Filtering
+            if (query.PriceFrom.HasValue)
+                q = q.Where(p => p.Price >= query.PriceFrom);
+
+            if (query.PriceTo.HasValue)
+                q = q.Where(p => p.Price <= query.PriceTo);
+
+            // Sorting
+            switch (query.SortBy.ToLower())
+            {
+                case "price":
+                    q = query.SortOrder == "desc" ? q.OrderByDescending(p => p.Price) : q.OrderBy(p => p.Price);
+                    break;
+
+                default:
+                    q = query.SortOrder == "desc" ? q.OrderByDescending(p => p.Name) : q.OrderBy(p => p.Name);
+                    break;
+            }
+
+            // Total count BEFORE pagination
+            int totalRecords = await q.CountAsync();
+
+            // Pagination
+            q = q.Skip((query.PageNumber - 1) * query.PageSize)
+                 .Take(query.PageSize);
+
+            var data = await q.ToListAsync();
+
+            return (data, totalRecords);
+        }
+
 
     }
 }
