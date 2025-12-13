@@ -15,19 +15,29 @@ namespace SelfLearningApiProject.Services
         // Mapper ka reference, jisse entity ko DTO me convert karte hain (agar zarurat ho to)
         private readonly IMapper _mapper;
 
+        private readonly ICacheService _cacheService;
+
         // Constructor me dependency injection ke through repository milti hai
-        public ProductService(IProductRepository productRepository,IMapper mapper)
+        public ProductService(IProductRepository productRepository,IMapper mapper, ICacheService cacheService)
         {
             _productRepository = productRepository;
             _mapper = mapper; // Mapper ko initialize karte hain, jisse entity se DTO me conversion ho sake
+            _cacheService = cacheService;
         }
 
         // Method: Saare products fetch karta hai, unhe DTO me convert karta hai aur return karta hai
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
+            string cacheKey = "productsList";
+            var cachedData = _cacheService.GetData<IEnumerable<Product>>(cacheKey);
+
+            if (cachedData != null)
+                return _mapper.Map<IEnumerable<ProductDto>>(cachedData);
+
             // Repository se entity list laate hain (Product entity list)
             var products = await _productRepository.GetAllAsync();
 
+            _cacheService.SetData(cacheKey, products, 600);
             // Entity list ko DTO me convert karte hain (Client ko sirf required fields dikhani chahiye)
             //return products.Select(p => new ProductDto
             //{
@@ -86,7 +96,7 @@ namespace SelfLearningApiProject.Services
 
             // Repository ko bolte hain naya product add karne ke liye
             await _productRepository.AddAsync(product);
-
+            _cacheService.RemoveData("productsList");
             // DB me changes save karna zaruri hai
             await _productRepository.SaveChangesAsync();
 
@@ -120,25 +130,33 @@ namespace SelfLearningApiProject.Services
 
             // Repository ko bolte hain update kar do
             await _productRepository.UpdateAsync(product);
+            _cacheService.RemoveData("productsList");
             await _productRepository.SaveChangesAsync();
 
             return true;
         }
 
         // Method: Ek product ko delete karta hai ID ke basis pe
-        public async Task<bool> DeleteProductAsync(int id) // agar successful hua to true return karega. agar nahi mila to false return karega
+        //public async Task<bool> DeleteProductAsync(int id) // agar successful hua to true return karega. agar nahi mila to false return karega
+        //{
+        //    // DB se product nikalte hain ID ke basis pe
+        //    var product = await _productRepository.GetByIdAsync(id);
+
+        //    // Agar product nahi mila, to false return karo
+        //    if (product == null)
+        //        return false;
+        //    // Agar mila, to usse delete karte hain
+        //    await _productRepository.DeleteAsync(product);
+        //    _cacheService.RemoveData("productsList");
+        //    // DB me changes save karna zaruri hai
+        //    await _productRepository.SaveChangesAsync();
+
+        //    return true;
+        //}
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            // DB se product nikalte hain ID ke basis pe
-            var product = await _productRepository.GetByIdAsync(id);
-
-            // Agar product nahi mila, to false return karo
-            if (product == null)
-                return false;
-            // Agar mila, to usse delete karte hain
-            await _productRepository.DeleteAsync(product);
-            // DB me changes save karna zaruri hai
-            await _productRepository.SaveChangesAsync();
-
+            await _productRepository.SoftDeleteAsync(id);
+            _cacheService.RemoveData("productsList");
             return true;
         }
 

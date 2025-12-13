@@ -29,6 +29,7 @@ namespace SelfLearningApiProject.Controllers
         // HTTP GET method – sabhi products ko return karta hai
         // Route: GET api/product
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         { 
             _logger.LogInformation("GetAll called with All products:"); // Info log

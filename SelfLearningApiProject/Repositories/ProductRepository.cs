@@ -21,9 +21,10 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
 
         // Yeh method saare products ko database se fetch karta hai aur unhe return karta hai
         public async Task<IEnumerable<Product>> GetAllAsync()
-        { // Yeh method saare products ko database se fetch karta hai aur unhe return karta hai // yeh asynchronous hai, isliye await keyword use hota hai// aur Task<IEnumerable<Product>> return karta hai// jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho // yeh method database se saare products ko fetch karta hai aur unhe list me convert karke return karta hai
+        { // Yeh method saare products ko database se fetch karta hai aur unhe return karta hai yeh asynchronous hai, isliye await keyword use hota hai// aur Task<IEnumerable<Product>> return karta hai// jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho // yeh method database se saare products ko fetch karta hai aur unhe list me convert karke return karta hai
             return await _context.Products.ToListAsync();
         }
+
 
         // Yeh method specific product ko ID ke basis pe fetch karta hai aur return karta hai
         public async Task<Product?> GetByIdAsync(int id)
@@ -45,10 +46,21 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
         }
 
         // Yeh method product ko database se delete karta hai
-        public async Task DeleteAsync(Product product)
+        //public async Task DeleteAsync(Product product)
+        //{
+        //    _context.Products.Remove(product); // Yeh method product ko database se delete karta hai // yeh asynchronous hai, isliye await keyword use hota hai // aur Task return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
+        //    await Task.CompletedTask;
+        //}
+        // Yeh method product ko soft delete karta hai database me yani product ko permanently delete nahi karta, balki uske IsDeleted flag ko true kar deta hai
+        public async Task SoftDeleteAsync(int id)
         {
-            _context.Products.Remove(product); // Yeh method product ko database se delete karta hai // yeh asynchronous hai, isliye await keyword use hota hai // aur Task return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
-            await Task.CompletedTask;
+            var product = await _context.Products.FindAsync(id);
+
+            if (product == null) return;
+
+            product.IsDeleted = true;       // Step 1: Soft delete flag
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();  // Step 2: Save changes
         }
 
         // Yeh method changes ko database me save karta hai

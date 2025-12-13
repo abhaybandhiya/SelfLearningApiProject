@@ -74,10 +74,13 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IFileService, FileService>(); // FileService ko Dependency Injection me add karte hain
+
+builder.Services.AddMemoryCache(); // In-Memory Caching ke liye service add karte hain jisse frequently accessed data ko cache kiya ja sake taaki performance improve ho sake aur database load kam ho
+builder.Services.AddScoped<ICacheService, CacheService>();
 
 // Swagger configuration API documentation ke liye Swagger UI provide karta hai jisse hum API endpoints ko test kar sakte hain
 builder.Services.AddSwaggerGen(c =>

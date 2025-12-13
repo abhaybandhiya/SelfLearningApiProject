@@ -45,6 +45,8 @@ namespace SelfLearningApiProject.Data
                     Role = "User"
                 }
             );
+            modelBuilder.Entity<Product>() // global query filter lagata hai taaki soft deleted products ko queries me na laaye matlab jinke IsDeleted = true hai unhe exclude kar de 
+            .HasQueryFilter(p => !p.IsDeleted);
         }
     }
 }

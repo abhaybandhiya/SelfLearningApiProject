@@ -11,7 +11,9 @@ namespace SelfLearningApiProject.Repositories
         Task<Product?> GetByIdAsync(int id); //Id ke hisaab se product laata hai
         Task AddAsync(Product product); //Naya product add karta hai
         Task UpdateAsync(Product product); //Product ko update karta hai
-        Task DeleteAsync(Product product); //Product ko delete karta hai
+        //Task DeleteAsync(Product product); //Product ko delete karta hai
+        Task SoftDeleteAsync(int id); //Product ko soft delete karta hai
+
         Task<bool> SaveChangesAsync(); //Changes database me save karta hai (best practice)
         Task<IEnumerable<Product>> GetPaginatedProductsAsync(int pageNumber, int pageSize); //Pagination ke liye products laata hai
         Task<IEnumerable<Product>> SearchAsync(string keyword); // Keyword ke basis pe products search karta hai
