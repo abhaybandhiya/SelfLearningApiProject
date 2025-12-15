@@ -8,6 +8,7 @@ using SelfLearningApiProject.Repositories;
 using SelfLearningApiProject.Repositories.Generic;
 using SelfLearningApiProject.Services;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 // WebApplication builder create karte hain, jo ki application ko configure karega
@@ -21,15 +22,18 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
  {
+     // Token validation parameters set karte hain jisse incoming JWT tokens ko validate kiya ja sake
      options.TokenValidationParameters = new TokenValidationParameters
      {
          ValidateIssuer = true,
          ValidateAudience = true,
-         ValidateLifetime = true,
          ValidateIssuerSigningKey = true,
          ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
          ValidAudience = builder.Configuration["JwtSettings:Audience"],
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+         IssuerSigningKey = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
+
+         NameClaimType = ClaimTypes.Name
      };
  }); // JWT Bearer authentication add karta hai jisse API requests authenticate ho sakein
 
@@ -82,6 +86,9 @@ builder.Services.AddScoped<IFileService, FileService>(); // FileService ko Depen
 builder.Services.AddMemoryCache(); // In-Memory Caching ke liye service add karte hain jisse frequently accessed data ko cache kiya ja sake taaki performance improve ho sake aur database load kam ho
 builder.Services.AddScoped<ICacheService, CacheService>();
 
+builder.Services.AddHttpContextAccessor(); // HTTP context ko access karne ke liye service add karte hain jisse hum request-specific information jaise headers, user info, etc. ko access kar sakein
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>(); // CurrentUserService ko Dependency Injection me add karte 
+
 // Swagger configuration API documentation ke liye Swagger UI provide karta hai jisse hum API endpoints ko test kar sakte hain
 builder.Services.AddSwaggerGen(c =>
 {
@@ -124,7 +131,6 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 var app = builder.Build();
 
 app.UseAuthentication();  // ye JWT tokens ko validate karega
-app.UseAuthorization();   // ye dekhega ki user ke paas permission hai ya nahi
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

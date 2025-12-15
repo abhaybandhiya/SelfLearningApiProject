@@ -42,10 +42,10 @@ public class JwtService : IJwtTokenService
         // 2. Claims add karna (user info)
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-
+            new Claim(JwtRegisteredClaimNames.Sub, username), // ye subject claim hai jisme username store hota hai
+            new Claim(ClaimTypes.Role, role), // ye role claim hai jisme user ka role store hota hai claim matlab ? // ek piece of information jo token me store hota hai
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // ye unique identifier claim hai har token ke liye
+            new Claim(ClaimTypes.Name, username),
             // Custom claim for demo policies:
             new Claim("department", role == "Admin" ? "Management" : "Sales")
             // (abhi simple mapping rakhi hai; baad me User entity me Department aa gaya to yahin se pick kar lena)

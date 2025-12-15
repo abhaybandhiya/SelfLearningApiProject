@@ -25,17 +25,17 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
             return await _context.Products.ToListAsync();
         }
 
-
         // Yeh method specific product ko ID ke basis pe fetch karta hai aur return karta hai
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await _context.Products.FindAsync(id); // Yeh method specific product ko ID ke basis pe fetch karta hai aur return karta hai // agar product nahi mila to yeh null return karega // yeh asynchronous hai, isliye await keyword use hota hai // aur Task<Product?> return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
+            return await _context.Products.FindAsync(id); // Yeh method specific product ko ID ke basis pe fetch karta hai aur return karta hai // agar product nahi mila to yeh null return karega // yeh asynchronous hai, isliye await keyword use hota hai // aur Task<Product?> return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na hoz
         }
 
         // Yeh method naya product add karta hai database me 
         public async Task AddAsync(Product product)
         {
             await _context.Products.AddAsync(product); // Yeh method naya product add karta hai database me // yeh asynchronous hai, isliye await keyword use hota hai // aur Task return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
+            await _context.SaveChangesAsync();  
         }
 
         // Yeh method existing product ko update karta hai database me
@@ -43,6 +43,7 @@ namespace SelfLearningApiProject.Repositories // Namespace define karta hai jaha
         {
             _context.Products.Update(product); // Yeh method existing product ko update karta hai database me // yeh asynchronous hai, isliye await keyword use hota hai // aur Task return karta hai // jisse ki yeh non-blocking operation ho sake // aur UI thread block na ho
             await Task.CompletedTask; // just to make method async
+            await _context.SaveChangesAsync();
         }
 
         // Yeh method product ko database se delete karta hai
