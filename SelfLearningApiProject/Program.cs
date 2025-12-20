@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SelfLearningApiProject.Data;
 using SelfLearningApiProject.Mapping;
+using SelfLearningApiProject.Middleware;
 using SelfLearningApiProject.Repositories;
 using SelfLearningApiProject.Repositories.Generic;
 using SelfLearningApiProject.Services;
@@ -31,7 +32,7 @@ builder.Services.AddAuthentication(options =>
          ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
          ValidAudience = builder.Configuration["JwtSettings:Audience"],
          IssuerSigningKey = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
+         Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
 
          NameClaimType = ClaimTypes.Name
      };
@@ -129,8 +130,12 @@ builder.Services.AddScoped<IJwtTokenService, JwtService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>(); // custom exception handling middleware ko pipeline me add karta hai
+app.UseMiddleware<LoggingMiddleware>(); // custom logging middleware ko pipeline me add karta hai
+app.UseMiddleware<RateLimitingMiddleware>(); // custom rate limiting middleware ko pipeline me add karta hai
 
 app.UseAuthentication();  // ye JWT tokens ko validate karega
+app.UseAuthorization(); // ye authenticated users ke access ko control karega
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -143,9 +148,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
