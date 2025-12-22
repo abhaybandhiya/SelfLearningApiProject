@@ -11,10 +11,16 @@ using SelfLearningApiProject.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Serilog;
+
 
 // WebApplication builder create karte hain, jo ki application ko configure karega
 var builder = WebApplication.CreateBuilder(args);
 
+// Serilog configuration ke liye. Yeh logging framework application ke logs ko manage karega aur unhe specified sinks (jaise console, file, etc.) me bhejega
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+
+builder.Host.UseSerilog();
 
 // JWT Authentication configuration ke liye. Yeh section JWT tokens ke sath authentication setup karta hai jisse secure endpoints banaye ja sakein
 builder.Services.AddAuthentication(options =>

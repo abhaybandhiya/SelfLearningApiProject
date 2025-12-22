@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SelfLearningApiProject.Helpers;
 using SelfLearningApiProject.Models.DTO;
+using SelfLearningApiProject.Models.Responses;
 using SelfLearningApiProject.Services;
 
 namespace SelfLearningApiProject.Controllers
@@ -38,7 +38,8 @@ namespace SelfLearningApiProject.Controllers
             var products = await _productService.GetAllProductsAsync();
 
             // 200 OK response ke saath products return kar rahe hain
-            return Ok(products);
+            //return Ok(products); 
+            return Ok(ApiResponse<IEnumerable<ProductDto>>.SuccessResponse(products, "Products fetched successfully"));
         }
 
         // HTTP GET method – specific product ko ID ke basis pe laata hai
@@ -55,10 +56,11 @@ namespace SelfLearningApiProject.Controllers
 
                 // Agar product nahi mila, to 404 Not Found return karo
                 if (product == null)
-                    return NotFound($"Product with ID {id} not found."); // 404 Not Found
+                    return NotFound(ApiResponse<string>.FailureResponse($"Product with ID {id} not found"));
 
                 // Agar product mila, to 200 OK ke saath return karo
-                return Ok(product); // 200 OK
+                //return Ok(product); // 200 OK
+                return Ok(ApiResponse<ProductDto>.SuccessResponse(product, "Product fetched successfully"));
             }
             catch (Exception ex)
             {
@@ -69,12 +71,13 @@ namespace SelfLearningApiProject.Controllers
 
         // HTTP POST method – naya product create karega
         [HttpPost]
-        
         public async Task<IActionResult> Create([FromBody] ProductDto productDto) // [FromBody] se batata hai ki data request body se aayega
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // ⬅️ Validation fail ho to ye chalega
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+
+                return BadRequest(ApiResponse<string>.FailureResponse("Validation failed", errors));
             }
             // Agar client ne null bhej diya to 400 BadRequest return karo
             if (productDto == null)
@@ -83,8 +86,7 @@ namespace SelfLearningApiProject.Controllers
             // Service layer ko call karte hain naya product banane ke liye
             var createdProduct = await _productService.CreateProductAsync(productDto); // Yeh method naya product create karega aur uska DTO return karega
 
-            var response = new ApiResponse<ProductDto>("Product created successfully", createdProduct);
-
+            var response = ApiResponse<ProductDto>.SuccessResponse(createdProduct, "Product created successfully");
             // 201 Created return karte hain (standard for POST)
             return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, response); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
 
@@ -103,9 +105,9 @@ namespace SelfLearningApiProject.Controllers
             // Agar update successful nahi hua (matlab product ID se match nahi hua), to 404 Not Found return karo
             if (!success)
             {
-                return NotFound(new ApiResponse<ProductDto>("Product not updated", productDto));
+                return NotFound(ApiResponse<ProductDto>.FailureResponse("Product not updated"));
             }
-            return Ok(new ApiResponse<ProductDto>("Product updated successfullyyy", productDto));
+            return Ok(ApiResponse<ProductDto>.SuccessResponse(productDto, "Product updated successfully"));
         }
 
         // HTTP DELETE method – product ko delete karega by ID
@@ -120,9 +122,9 @@ namespace SelfLearningApiProject.Controllers
 
             // Agar delete successful nahi hua (matlab product ID se match nahi hua), to 404 Not Found return karo
             if (!success)
-                return NotFound(new ApiResponse<ProductDto>("No data deleted", productDto));
+                return NotFound(ApiResponse<string>.FailureResponse("No data deleted"));
             // Agar delete successful hua, to 204 No Content return karo (matlab delete ho gaya)
-            return Ok(new ApiResponse<ProductDto>("Product deleted successfully", productDto));
+            return Ok(ApiResponse<ProductDto>.SuccessResponse(productDto, "Product deleted successfully"));
         }
         // Aap yahan aur bhi HTTP methods (POST, PUT, DELETE) add kar sakte hain jaise ki products create/update/delete karne ke liye
 
@@ -131,7 +133,7 @@ namespace SelfLearningApiProject.Controllers
         public async Task<IActionResult> GetPaged([FromQuery] PaginationRequestDTO request)
         {
             var data = await _productService.GetPaginatedProductsAsync(request.PageNumber, request.PageSize);
-            return Ok(data);
+            return Ok(ApiResponse<object>.SuccessResponse(data, "Pagination applyed successfully"));
         }
 
         [AllowAnonymous] // Is endpoint ko anonymous access ki permission hai 
@@ -143,7 +145,7 @@ namespace SelfLearningApiProject.Controllers
                 return BadRequest("Keyword cannot be empty");
 
             var result = await _productService.SearchProductsAsync(keyword.ToLower());
-            return Ok(result);
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Data fetched successfully with search"));
         }
 
         // HTTP GET method – products ko sort karta hai
@@ -152,7 +154,7 @@ namespace SelfLearningApiProject.Controllers
         public async Task<IActionResult> GetSorted([FromQuery] string sortBy = "name", [FromQuery] string sortOrder = "asc")
         {
             var result = await _productService.GetSortedProductsAsync(sortBy, sortOrder);
-            return Ok(result);
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Sorting applyed successfully"));
         }
 
         // HTTP POST method – products ko filter karta hai        
@@ -161,7 +163,7 @@ namespace SelfLearningApiProject.Controllers
         public async Task<IActionResult> FilterProducts([FromBody] FilteringRequestDTO request)
         {
             var result = await _productService.FilterProductsAsync(request);
-            return Ok(result);
+            return Ok(ApiResponse<object>.SuccessResponse(result, "filter applyed successfully"));
         }
             
         [AllowAnonymous]
