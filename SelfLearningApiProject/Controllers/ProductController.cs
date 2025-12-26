@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SelfLearningApiProject.Models.DTO;
 using SelfLearningApiProject.Models.Responses;
@@ -9,8 +10,9 @@ namespace SelfLearningApiProject.Controllers
     // Yeh class ek API controller hai – Isme HTTP endpoints hote hain
     [Authorize]
     [ApiController] // Batata hai ki yeh controller automatic model validation karega
-    [Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
-
+    //[Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")] // Versioning ke liye route
     public class ProductController : ControllerBase
     {
         // Service layer ka reference – business logic iske andar hoti hai
@@ -29,7 +31,7 @@ namespace SelfLearningApiProject.Controllers
         // HTTP GET method – sabhi products ko return karta hai
         // Route: GET api/product
         [HttpGet]
-        [AllowAnonymous]
+        [AllowAnonymous] 
         public async Task<IActionResult> GetAll()
         { 
             _logger.LogInformation("GetAll called with All products:"); // Info log

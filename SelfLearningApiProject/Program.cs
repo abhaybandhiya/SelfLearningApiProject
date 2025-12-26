@@ -12,7 +12,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Serilog;
-
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 
 // WebApplication builder create karte hain, jo ki application ko configure karega
 var builder = WebApplication.CreateBuilder(args);
@@ -96,6 +97,22 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddHttpContextAccessor(); // HTTP context ko access karne ke liye service add karte hain jisse hum request-specific information jaise headers, user info, etc. ko access kar sakein
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>(); // CurrentUserService ko Dependency Injection me add karte 
 
+// ye API versioning ko enable karta hai jisse hum apni API ke multiple versions ko manage kar sakein
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0); // default version set karte hain 1.0 agar client ne version specify nahi kiya 
+    options.AssumeDefaultVersionWhenUnspecified = true; // agar version na diya ho
+    options.ReportApiVersions = true; // response headers me version info
+});
+
+builder.Services.AddApiVersioning()
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV"; // v1, v2
+        options.SubstituteApiVersionInUrl = true;
+    });
+
+
 // Swagger configuration API documentation ke liye Swagger UI provide karta hai jisse hum API endpoints ko test kar sakte hain
 builder.Services.AddSwaggerGen(c =>
 {
@@ -105,7 +122,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // 🔑 JWT Authorize button ke liye
+    // JWT Authorize button ke liye
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
