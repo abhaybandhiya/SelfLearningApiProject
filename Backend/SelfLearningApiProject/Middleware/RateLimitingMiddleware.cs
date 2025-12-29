@@ -8,7 +8,7 @@ namespace SelfLearningApiProject.Middleware
         private readonly RequestDelegate _next; // next middleware ya controller ke liye yeh delegate he jo next component ko call karta he
         private readonly IMemoryCache _cache;   // ye cache service ke liye he
 
-        private const int LIMIT = 10;        // max requests
+        private const int LIMIT = 100;        // max requests
         private const int WINDOW = 60;       // seconds
 
         public RateLimitingMiddleware(RequestDelegate next, IMemoryCache cache) // constructor

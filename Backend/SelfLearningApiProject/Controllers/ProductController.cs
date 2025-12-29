@@ -10,9 +10,9 @@ namespace SelfLearningApiProject.Controllers
     // Yeh class ek API controller hai – Isme HTTP endpoints hote hain
     [Authorize]
     [ApiController] // Batata hai ki yeh controller automatic model validation karega
-    //[Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")] // Versioning ke liye route
+    [Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
+    //[ApiVersion("1.0")]
+    //[Route("api/v{version:apiVersion}/[controller]")] // Versioning ke liye route
     public class ProductController : ControllerBase
     {
         // Service layer ka reference – business logic iske andar hoti hai

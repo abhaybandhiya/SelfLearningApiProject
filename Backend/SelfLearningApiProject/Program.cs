@@ -105,12 +105,12 @@ builder.Services.AddApiVersioning(options =>
     options.ReportApiVersions = true; // response headers me version info
 });
 
-builder.Services.AddApiVersioning()
-    .AddApiExplorer(options =>
-    {
-        options.GroupNameFormat = "'v'VVV"; // v1, v2
-        options.SubstituteApiVersionInUrl = true;
-    });
+//builder.Services.AddApiVersioning()
+//    .AddApiExplorer(options =>
+//    {
+//        options.GroupNameFormat = "'v'VVV"; // v1, v2
+//        options.SubstituteApiVersionInUrl = true;
+//    });
 
 
 // Swagger configuration API documentation ke liye Swagger UI provide karta hai jisse hum API endpoints ko test kar sakte hain
@@ -152,7 +152,17 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IJwtTokenService, JwtService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 var app = builder.Build();
+app.UseCors("AllowReact");
 app.UseMiddleware<ExceptionMiddleware>(); // custom exception handling middleware ko pipeline me add karta hai
 app.UseMiddleware<LoggingMiddleware>(); // custom logging middleware ko pipeline me add karta hai
 app.UseMiddleware<RateLimitingMiddleware>(); // custom rate limiting middleware ko pipeline me add karta hai
