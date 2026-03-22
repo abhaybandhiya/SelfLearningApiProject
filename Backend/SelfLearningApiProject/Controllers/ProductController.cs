@@ -8,7 +8,7 @@ using SelfLearningApiProject.Services;
 namespace SelfLearningApiProject.Controllers
 {
     // Yeh class ek API controller hai – Isme HTTP endpoints hote hain
-    [Authorize]
+    [Authorize] 
     [ApiController] // Batata hai ki yeh controller automatic model validation karega
     [Route("api/[controller]")] // Yeh URL define karta hai: api/product (based on class name)
     //[ApiVersion("1.0")]
@@ -31,7 +31,7 @@ namespace SelfLearningApiProject.Controllers
         // HTTP GET method – sabhi products ko return karta hai
         // Route: GET api/product
         [HttpGet]
-        [AllowAnonymous] 
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         { 
             _logger.LogInformation("GetAll called with All products:"); // Info log
@@ -91,7 +91,6 @@ namespace SelfLearningApiProject.Controllers
             var response = ApiResponse<ProductDto>.SuccessResponse(createdProduct, "Product created successfully");
             // 201 Created return karte hain (standard for POST)
             return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, response); // CreatedAtAction se batata hai ki naya resource ka URL kya hoga
-
         }
 
         // HTTP PUT method – existing product ko update karega
@@ -116,7 +115,7 @@ namespace SelfLearningApiProject.Controllers
         //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
 
-        // Route: DELETE api/product/5 TO 5 id vale product ko delete karega // Deletes a product by ID 
+        // Route: DELETE api/product/5 TO 5 id vale product ko delete karega Deletes a product by ID 
         public async Task<IActionResult> Delete(int id, ProductDto productDto)  
         {
             // Service layer ko call karte hain product delete karne ke liye
@@ -127,9 +126,9 @@ namespace SelfLearningApiProject.Controllers
                 return NotFound(ApiResponse<string>.FailureResponse("No data deleted"));
             // Agar delete successful hua, to 204 No Content return karo (matlab delete ho gaya)
             return Ok(ApiResponse<ProductDto>.SuccessResponse(productDto, "Product deleted successfully"));
-        }
-        // Aap yahan aur bhi HTTP methods (POST, PUT, DELETE) add kar sakte hain jaise ki products create/update/delete karne ke liye
+        }   
 
+        // Aap yahan aur bhi HTTP methods (POST, PUT, DELETE) add kar sakte hain jaise ki products create/update/delete karne ke liye
         // HTTP GET method – paginated products ko laata hai
         [HttpGet("paged")]
         public async Task<IActionResult> GetPaged([FromQuery] PaginationRequestDTO request)

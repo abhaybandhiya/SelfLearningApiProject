@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/authApi";
+import { ToastContainer , toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   //  Form fields ke liye state
@@ -23,11 +25,15 @@ const Login = () => {
 
     try {
       // 🔐 API call
-      const data = await login(username, password);
+      const data = await login({username, password});
       // 🔐 Token save (important)
-      localStorage.setItem("token", data.accessToken);
-      // ✅ Login success → products page
-      navigate("/products");
+      localStorage.setItem("token", data.accessToken); // token ko localStorage me store kar rahe hain
+        toast.success("Login successful 🎉");
+        setTimeout(() => {
+          navigate("/products");
+        }, 1000);
+
+
     } catch (err) {
       console.error(err);
       setError("Invalid username or password");
@@ -74,6 +80,7 @@ const Login = () => {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

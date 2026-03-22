@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getAllProducts } from "../../api/productApi";
 
 export function useProducts() {
@@ -6,20 +6,21 @@ export function useProducts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const data = await getAllProducts();
-        setProducts(data);
-      } catch {
-        setError("Failed to load products");
-      } finally {
-        setLoading(false);
-      }
+  const load = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getAllProducts();
+      setProducts(data);
+    } catch {
+      setError("Failed to load products");
+    } finally {
+      setLoading(false);
     }
-    load();
   }, []);
 
-  return { products, loading, error };
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return { products, loading, error, reload: load };
 }

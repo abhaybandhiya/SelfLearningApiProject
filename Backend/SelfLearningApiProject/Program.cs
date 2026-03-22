@@ -15,15 +15,12 @@ using Serilog;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 
-// WebApplication builder create karte hain, jo ki application ko configure karega
 var builder = WebApplication.CreateBuilder(args);
 
-// Serilog configuration ke liye. Yeh logging framework application ke logs ko manage karega aur unhe specified sinks (jaise console, file, etc.) me bhejega
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 builder.Host.UseSerilog();
 
-// JWT Authentication configuration ke liye. Yeh section JWT tokens ke sath authentication setup karta hai jisse secure endpoints banaye ja sakein
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,7 +40,7 @@ builder.Services.AddAuthentication(options =>
 
          NameClaimType = ClaimTypes.Name
      };
- }); // JWT Bearer authentication add karta hai jisse API requests authenticate ho sakein
+ });
 
     builder.Services.AddAuthorization(
        options =>
@@ -68,21 +65,16 @@ builder.Services.AddAuthentication(options =>
        }
     );
 
-//Ye line Dependency Injection system ko batati hai ki jab IProductRepository maanga jaye, to ProductRepository provide karo.
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-// Ye line batati hai ki jab IProductService maanga jaye, to ProductService provide karo.
 builder.Services.AddScoped<IProductService, ProductService>();
 
-// Ye line batati hai ki jab IUserRepository maanga jaye, to UserRepository provide karo.
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// Ye line batati hai ki jab IAuthService maanga jaye, to AuthService provide karo.
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Ye line AutoMapper ko configure karti hai, jisse ki mapping profiles use ho sakein.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add services to the container.
@@ -91,18 +83,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IFileService, FileService>(); // FileService ko Dependency Injection me add karte hain
 
-builder.Services.AddMemoryCache(); // In-Memory Caching ke liye service add karte hain jisse frequently accessed data ko cache kiya ja sake taaki performance improve ho sake aur database load kam ho
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICacheService, CacheService>();
 
-builder.Services.AddHttpContextAccessor(); // HTTP context ko access karne ke liye service add karte hain jisse hum request-specific information jaise headers, user info, etc. ko access kar sakein
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>(); // CurrentUserService ko Dependency Injection me add karte 
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>(); 
 
-// ye API versioning ko enable karta hai jisse hum apni API ke multiple versions ko manage kar sakein
 builder.Services.AddApiVersioning(options =>
 {
-    options.DefaultApiVersion = new ApiVersion(1, 0); // default version set karte hain 1.0 agar client ne version specify nahi kiya 
-    options.AssumeDefaultVersionWhenUnspecified = true; // agar version na diya ho
-    options.ReportApiVersions = true; // response headers me version info
+    options.DefaultApiVersion = new ApiVersion(1, 0); 
+    options.AssumeDefaultVersionWhenUnspecified = true; 
+    options.ReportApiVersions = true; 
 });
 
 //builder.Services.AddApiVersioning()
@@ -113,7 +104,7 @@ builder.Services.AddApiVersioning(options =>
 //    });
 
 
-// Swagger configuration API documentation ke liye Swagger UI provide karta hai jisse hum API endpoints ko test kar sakte hain
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -122,7 +113,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // JWT Authorize button ke liye
+    // JWT Authorize for button
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -163,12 +154,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.UseCors("AllowReact");
-app.UseMiddleware<ExceptionMiddleware>(); // custom exception handling middleware ko pipeline me add karta hai
-app.UseMiddleware<LoggingMiddleware>(); // custom logging middleware ko pipeline me add karta hai
-app.UseMiddleware<RateLimitingMiddleware>(); // custom rate limiting middleware ko pipeline me add karta hai
-
-app.UseAuthentication();  // ye JWT tokens ko validate karega
-app.UseAuthorization(); // ye authenticated users ke access ko control karega
+app.UseMiddleware<ExceptionMiddleware>(); 
+app.UseMiddleware<LoggingMiddleware>(); 
+app.UseMiddleware<RateLimitingMiddleware>(); 
+app.UseAuthentication();
+app.UseAuthorization(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

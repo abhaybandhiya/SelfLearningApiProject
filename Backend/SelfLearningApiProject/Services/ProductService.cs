@@ -107,7 +107,6 @@ namespace SelfLearningApiProject.Services
             //    Name = product.Name, // Name bhi DTO me set karte hain
             //    Price = product.Price // Price bhi DTO me set karte hain
             //};
-
             // Mapper ka use karke entity ko DTO me convert karte hain
             return _mapper.Map<ProductDto>(product); // yeh line Product entity ko ProductDto me convert karti hai // aur return karti hai // agar product null nahi hai to, to yeh ProductDto object return karega // agar product null hai to, to yeh null return karega
         }

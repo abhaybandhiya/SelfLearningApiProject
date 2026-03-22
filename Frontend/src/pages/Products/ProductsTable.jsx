@@ -9,6 +9,7 @@ function ProductsTable({ productsPROP }) {
         <tr>
           <th>Name</th>
           <th>Price</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -16,6 +17,9 @@ function ProductsTable({ productsPROP }) {
           <tr key={p.id}>
             <td>{p.name}</td>
             <td>₹{p.price}</td>
+            <td>
+              <button onClick={() => onEdit(p)}>Edit</button>
+            </td>
           </tr>
         ))}
       </tbody>

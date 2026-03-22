@@ -53,6 +53,5 @@ namespace SelfLearningApiProject.Services
             var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
             return user;
         }
-
     }
 }

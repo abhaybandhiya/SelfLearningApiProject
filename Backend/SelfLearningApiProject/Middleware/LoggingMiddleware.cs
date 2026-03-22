@@ -8,7 +8,7 @@ namespace SelfLearningApiProject.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger<LoggingMiddleware> _logger;
         private readonly IWebHostEnvironment _env;
-
+        
         public LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger, IWebHostEnvironment environment)
         {
             _next = next;
